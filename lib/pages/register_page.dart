@@ -58,6 +58,60 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  Widget _textFormEmail() {
+    return TextFormField(
+      controller: _emailController,
+      decoration: const InputDecoration(
+        label: Text('Email')
+      ),
+      validator: (val) {
+        if(val == null || val.isEmpty) {
+          return 'Required';
+        }
+        return null;
+      },
+      keyboardType: TextInputType.emailAddress,
+    );
+  }
+
+  Widget _textFormPassword() {
+    return TextFormField(
+      controller: _passwordController,
+      obscureText: true,
+      decoration: const InputDecoration(
+        label: Text('Password')
+      ),
+      validator: (val) {
+        if(val == null || val.isEmpty) {
+          return 'Required';
+        }
+        if(val.length < 6) {
+          return '6 characters minimum';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _textFormUsername() {
+    return TextFormField(
+      controller: _userNameController,
+      decoration: const InputDecoration(
+        label: Text('Username')
+      ),
+      validator: (val) {
+        if(val == null || val.isEmpty) {
+          return 'Required';
+        }
+        final bool isValid = RegExp(r'^[A-Za-z0-9_]{3,24}$').hasMatch(val);
+        if(!isValid) {
+          return '3-24 long with alphanumeric of underscore';
+        }
+        return null;
+      },
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -70,53 +124,11 @@ class _RegisterPageState extends State<RegisterPage> {
         child: ListView(
           padding: formPadding,
           children: [
-            TextFormField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                label: Text('Email')
-              ),
-              validator: (val) {
-                if(val == null || val.isEmpty) {
-                  return 'Required';
-                }
-                return null;
-              },
-              keyboardType: TextInputType.emailAddress,
-            ),
+            _textFormEmail(),
             formSpacer,
-            TextFormField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                label: Text('Password')
-              ),
-              validator: (val) {
-                if(val == null || val.isEmpty) {
-                  return 'Required';
-                }
-                if(val.length < 6) {
-                  return '6 characters minimum';
-                }
-                return null;
-              },
-            ),
+            _textFormPassword(),
             formSpacer,
-            TextFormField(
-              controller: _userNameController,
-              decoration: const InputDecoration(
-                label: Text('Username')
-              ),
-              validator: (val) {
-                if(val == null || val.isEmpty) {
-                  return 'Required';
-                }
-                final bool isValid = RegExp(r'^[A-Za-z0-9_]{3,24}$').hasMatch(val);
-                if(!isValid) {
-                  return '3-24 long with alphanumeric of underscore';
-                }
-                return null;
-              },
-            ),
+            _textFormUsername(),
             formSpacer,
             ElevatedButton(
               onPressed: _isLoading ? null : _signUp,

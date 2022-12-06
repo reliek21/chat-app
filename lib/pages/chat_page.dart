@@ -24,8 +24,8 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void initState() {
-    final myUserId = supabase.auth.currentUser!.id;
-    
+    final String myUserId = supabase.auth.currentUser!.id;
+
     _messagesStream = supabase
       .from('messages')
       .stream(primaryKey: ['id'])
@@ -45,11 +45,41 @@ class _ChatPageState extends State<ChatPage> {
       return;
     }
 
-    final data = await supabase.from('profiles').select().eq('id', profileId).single();
-    final profile = Profile.fromMap(data);
+    final dynamic data = await supabase.from('profiles')
+      .select().eq('id', profileId).single();
+
+    final Profile profile = Profile.fromMap(data);
+
     setState(() {
       _profileCache[profileId] = profile;
     });
+  }
+
+  Widget _buildMessages(List<Message> messages) {
+    return Column(
+      children: [
+        Expanded(
+          child: messages.isEmpty
+            ? const Center(
+              child: Text('Start your conversation now :)'),
+            )
+            : ListView.builder(
+              reverse: true,
+              itemCount: messages.length,
+              itemBuilder: (context, index) {
+                final message = messages[index];
+                _loadProfileCache(message.profileId);
+
+                return _ChatBubble(
+                  message: message,
+                  profile: _profileCache[message.profileId]
+                );
+              },
+            ),
+        ),
+        const _MessageBar()
+      ],
+    );
   }
 
   @override
@@ -61,31 +91,7 @@ class _ChatPageState extends State<ChatPage> {
         builder: (context, snapshot) {
           if(snapshot.hasData) {
             final messages = snapshot.data!;
-
-            return Column(
-              children: [
-                Expanded(
-                  child: messages.isEmpty
-                    ? const Center(
-                      child: Text('Start your conversation now :)'),
-                    )
-                    : ListView.builder(
-                      reverse: true,
-                      itemCount: messages.length,
-                      itemBuilder: (context, index) {
-                        final message = messages[index];
-                        _loadProfileCache(message.profileId);
-
-                        return _ChatBubble(
-                          message: message,
-                          profile: _profileCache[message.profileId]
-                        );
-                      },
-                    ),
-                ),
-                const _MessageBar()
-              ],
-            );
+            return _buildMessages(messages);
           } else {
             return preloader;
           }
@@ -98,7 +104,7 @@ class _ChatPageState extends State<ChatPage> {
 // set of widget that constains TextField and Button to submit message
 
 class _MessageBar extends StatefulWidget {
-  const _MessageBar({super.key});
+  const _MessageBar();
 
   @override
   State<_MessageBar> createState() => __MessageBarState();
@@ -173,11 +179,25 @@ class _ChatBubble extends StatelessWidget {
   final Message message;
   final Profile? profile;
 
-  const _ChatBubble({
-    required this.message,
-    required this.profile,
-    super.key
-  });
+  const _ChatBubble({required this.message, required this.profile});
+
+  Widget isMineMessage(BuildContext context) {
+    return Flexible(
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 8.0,
+          horizontal: 12.0
+        ),
+        decoration: BoxDecoration(
+          color: message.isMine
+            ? Theme.of(context).primaryColor
+            : Colors.grey[300],
+          borderRadius: BorderRadius.circular(8.0)
+        ),
+        child: Text(message.content)
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -190,22 +210,7 @@ class _ChatBubble extends StatelessWidget {
         ),
       
       const SizedBox(width: 12.0),
-
-      Flexible(
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: 8.0,
-            horizontal: 12.0
-          ),
-          decoration: BoxDecoration(
-            color: message.isMine
-              ? Theme.of(context).primaryColor
-              : Colors.grey[300],
-            borderRadius: BorderRadius.circular(8.0)
-          ),
-          child: Text(message.content)
-        ),
-      ),
+      isMineMessage(context),
       const SizedBox(width: 12.0),
       Text(format(message.createdAt, locale: 'en_short')),
       const SizedBox(width: 60.0),

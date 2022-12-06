@@ -44,22 +44,26 @@ final appTheme = ThemeData.light().copyWith(
       fontSize: 18.0,
     ),
   ),
+
   primaryColor: orangeColor,
   textButtonTheme: TextButtonThemeData(
     style: TextButton.styleFrom(
       foregroundColor: orangeColor,
     ),
   ),
+
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       foregroundColor: whiteColor,
       backgroundColor: orangeColor,
     ),
   ),
+
   inputDecorationTheme: InputDecorationTheme(
     floatingLabelStyle: const TextStyle(
       color: orangeColor,
     ),
+
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(circularRadius),
       borderSide: const BorderSide(
@@ -67,7 +71,9 @@ final appTheme = ThemeData.light().copyWith(
         width: 2.0,
       ),
     ),
+
     focusColor: orangeColor,
+    
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(circularRadius),
       borderSide: const BorderSide(
