@@ -21,12 +21,12 @@ const Widget preloader = Center(
 );
 
 /// Simple sized box to space out form elements
-const Widget formSpacer = SizedBox(width: 16, height: 16);
+const Widget formSpacer = SizedBox(width: 16.0, height: 16.0);
 
 /// Some padding for all the forms to use
 const EdgeInsets formPadding = EdgeInsets.symmetric(
-  vertical: 20,
-  horizontal: 16
+  vertical: 20.0,
+  horizontal: 16.0
 );
 
 /// Error message to display the user when unexpected error occurs.
@@ -61,7 +61,7 @@ final appTheme = ThemeData.light().copyWith(
       color: orangeColor,
     ),
     border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(circularRadius),
       borderSide: const BorderSide(
         color: greyColor,
         width: 2.0,
